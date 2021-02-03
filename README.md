@@ -4,13 +4,18 @@ AI for rush hour. Solves rushhour puzzles using A* algorithm. Implemented in Pyt
 
 ## Instructions
 
-To run the solver:
+To run the python solver:
 
 ```bash
 # python 3.6+
 python src/solve.py
 ```
 
+To run the rust solver:
+
+```bash
+# TODO
+```
 ## Folder Structure
 
 * jams: Test Cases
@@ -73,3 +78,4 @@ finished solve for jam 40 (elapsed = 0:00:04.781983, search_count = 24467
 * Inspirations for solve algorithm:
     * Java Rush Hour Solve Algorithm: https://github.com/saschazar21/rushhour
     * A* Search Algorithm: https://en.wikipedia.org/wiki/A*_search_algorithm
+    * Sudoku Solver: https://github.com/nathanesau/sudoku_solver
