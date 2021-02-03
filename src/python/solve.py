@@ -5,7 +5,7 @@ from typing import List
 
 
 BASEDIR = os.path.dirname(os.path.realpath(__file__))
-INPUT_DIR = f"{BASEDIR}/jams"
+INPUT_DIR = f"{BASEDIR}/../../jams"
 
 
 class State:
