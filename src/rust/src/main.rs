@@ -2,8 +2,6 @@ use clap::App;
 use clap::Arg;
 
 use std::collections::HashMap;
-use std::rc::Rc;
-use std::cell::RefCell;
 use std::collections::VecDeque;
 
 use lazy_static::lazy_static;
@@ -78,10 +76,10 @@ impl<'a> State<'a> {
         return grid;
     }
 
-    pub fn expand(&self) -> Vec<State> {
+    pub fn expand(&self) -> Vec<State<'a>> {
         
         let grid = self.get_grid();
-        let mut new_states: Vec<State> = vec![];
+        let mut new_states: Vec<State<'a>> = vec![];
 
         for car_name in self.puzzle.car_names.iter() {
             let p = self.variable_position[car_name];
@@ -131,27 +129,29 @@ impl<'a> State<'a> {
 }
 
 pub struct Node<'a> {
+    pub idx: usize,
     pub state: State<'a>,
     pub depth: usize,
-    pub parent: Option<&'a Node<'a>>,
+    pub parent_idx: usize,
 }
 
 impl<'a> Node<'a> {
-    pub fn expand(&self) -> Vec<Node> {
+    pub fn expand(&self, idx: usize) -> Vec<Node<'a>> {
 
-        /*let new_states = self.state.expand();
+        let new_states = self.state.expand();
         let mut new_nodes: Vec<Node> = vec![];
+        let mut new_node_idx = idx;
         for state in new_states {
             new_nodes.push(Node {
+                idx: new_node_idx,
                 state: state,  // NOTE: move state
                 depth: self.depth + 1,
-                parent: Some(self)
+                parent_idx: self.idx,
             });
+            new_node_idx += 1;
         }
 
         return new_nodes;
-        */
-        return vec![];
     }
 }
 
@@ -222,29 +222,21 @@ fn parse_board(s: &String) -> (Puzzle, HashMap<char, usize>) {
     return (puzzle, variable_position);
 }
 
-pub fn astar_build_path<'a>(current: Rc<RefCell<Node>>) -> VecDeque<State<'a>> {
+pub fn astar_build_path<'a>(_: &Node) -> VecDeque<State<'a>> {
     let path: VecDeque<State> = VecDeque::new();
-    let node = Option::Some(current);
-    loop {
-        match node {
-            None => {
-                break;
-            }
-            Some(_) => {
-                // TODO push nodes
-            }
-        }
-    }
-
+    // todo
     return path;
 }
 
-pub fn astar_find_node<'a>(open: &Vec<Rc<RefCell<Node<'a>>>>, node: &Rc<RefCell<Node<'a>>>) -> bool {
+pub fn astar_find_node<'a>(nodes: &Vec<Node>, node_idx_list: &Vec<usize>, node_idx: &usize) -> bool {
 
-    let node_state = &node.borrow().state;
-    for i in 0..open.len() {
-        let nl_node = &open[i];
-        let nl_node_state = &nl_node.borrow().state;
+    let node: &Node = &nodes[*node_idx];
+
+    let node_state = &node.state;
+    for i in 0..node_idx_list.len() {
+        let nl_node_index = &node_idx_list[i];
+        let nl_node = &nodes[*nl_node_index];
+        let nl_node_state = &nl_node.state;
         if nl_node_state.variable_position == node_state.variable_position {
             return true;
         }
@@ -253,51 +245,61 @@ pub fn astar_find_node<'a>(open: &Vec<Rc<RefCell<Node<'a>>>>, node: &Rc<RefCell<
     return false;
 }
 
-pub fn astar_update_open<'a>(open: &mut Vec<Rc<RefCell<Node<'a>>>>, node: &Rc<RefCell<Node<'a>>>) {
+pub fn astar_update_open<'a>(nodes: &Vec<Node>, open: &mut Vec<usize>, node_idx: &usize) {
+
+    let node: &Node = &nodes[*node_idx];
 
     let mut index = 0;
-    let node_state = &node.borrow().state;
+    let node_state = &node.state;
     for i in 0..open.len() {
-        let nl_node = &open[i];
-        let nl_node_state = &nl_node.borrow().state;
+        let nl_node_index = &open[i];
+        let nl_node = &nodes[*nl_node_index];
+        let nl_node_state = &nl_node.state;
         if nl_node_state.variable_position == node_state.variable_position {
             index = i;
             break;
         }
     }
 
-    let existing = &open[index];
-    if existing.borrow().depth > node.borrow().depth {
+    let existing_index = &open[index];
+    let existing = &nodes[*existing_index];
+    if existing.depth > node.depth {
         open.remove(index);
-        open.push(node.clone());
+        open.push(node.idx);
     }
     
 }
 
 // NOTE: initial_node is moved into the function
 pub fn astar_solve<'a>(initial_node: Node<'a>) -> Option<VecDeque<State<'a>>> {
+
+    // keep all nodes in a vector
+    let mut nodes: Vec<Node<'a>> = vec![];
+
+    let root_idx = initial_node.idx;
+
     // NOTE: initial_node is copied into root node
-    let root: Rc<RefCell<Node<'a>>> = Rc::new(RefCell::new(Node {
+    let root: Node<'a> = Node {
+        idx: root_idx,
         state: State {
             puzzle: initial_node.state.puzzle,
             variable_position: initial_node.state.variable_position
         },
         depth: initial_node.depth,
-        parent: initial_node.parent
-    }));
-    // start with root node
-    let mut open: Vec<Rc<RefCell<Node<'a>>>> = vec![root.clone()];
-    let mut closed: Vec<Rc<RefCell<Node<'a>>>> = vec![];
+        parent_idx: initial_node.parent_idx
+    };
 
-    // keep all nodes in a vector
-    let mut nodes = vec![];
     nodes.push(root);
+
+    // start with root node
+    let mut open: Vec<usize> = vec![root_idx];
+    let mut closed: Vec<usize> = vec![];
     
     while !open.is_empty() {
         open.sort_by(|a, b| {
-            if a.borrow().depth < b.borrow().depth {
+            if nodes[*a].depth < nodes[*b].depth {
                 return std::cmp::Ordering::Less;
-            } else if a.borrow().depth == b.borrow().depth {
+            } else if nodes[*a].depth == nodes[*b].depth {
                 return std::cmp::Ordering::Equal;
             } else {
                 return std::cmp::Ordering::Greater;
@@ -305,36 +307,44 @@ pub fn astar_solve<'a>(initial_node: Node<'a>) -> Option<VecDeque<State<'a>>> {
         });
 
         // clone here because we erase the shared ptr from open afterwards
-        let current = open[0];
+        let current_idx = open[0];
+
+        // remove from open
         open.remove(0);
 
-        if current.borrow().state.is_goal() {
-            let path = astar_build_path(current);
+        if nodes[current_idx].state.is_goal() {
+            let path = astar_build_path(&nodes[current_idx]);
             return Some(path);
         }
 
-        // push current to closed
-        closed.push(current.clone());
+        // add to closed
+        closed.push(current_idx);
 
-        let new_nodes = current.borrow().expand();
+        // get new nodes (idx starting from nodes.len())
+        let new_nodes = nodes[current_idx].expand(nodes.len());
+
         for successor in new_nodes {
-            // copy successor into nodes
-            let node = Rc::new(RefCell::new(Node {
+
+            let node_idx = successor.idx;
+
+            let node: Node<'a> = Node {
+                idx: node_idx,
                 state: State {
                     puzzle: successor.state.puzzle,
                     variable_position: successor.state.variable_position
                 },
                 depth: successor.depth,
-                parent: successor.parent
-            }));
+                parent_idx: successor.parent_idx
+            };
+
+            // keep all nodes in a vector
             nodes.push(node);
 
-            let node = &nodes[nodes.len() - 1];
-            if astar_find_node(&open, &node) {
-                astar_update_open(&mut open, &node);
+            if astar_find_node(&nodes, &open, &node_idx) {
+                astar_update_open(&nodes, &mut open, &node_idx);
             }
-            else if !astar_find_node(&closed, &node) {
-                open.push(node.clone());
+            else if !astar_find_node(&nodes, &closed, &node_idx) {
+                open.push(node_idx);
             }
         }
     }
@@ -354,24 +364,29 @@ pub fn main() {
     let matches = clap_app.get_matches();
     let jamdir = matches.value_of("jamdir").unwrap();
 
-    let board = std::fs::read_to_string(format!("{}/jam_1.txt", jamdir))
+    for i in 1..=40 {
+
+        let board = std::fs::read_to_string(format!("{}/jam_{}.txt", jamdir, i))
         .expect("jam file was not found in provided jamdir!");
 
-    let info = parse_board(&board);
-    let puzzle = info.0;
-    let variable_position = info.1;
+        let info = parse_board(&board);
+        let puzzle = info.0;
+        let variable_position = info.1;
 
-    let initial_node = Node {
-        state: State {
-            puzzle: &puzzle,
-            variable_position: variable_position
-        },
-        depth: 0,
-        parent: Option::None
-    };
+        // NOTE: parent_idx not used for root
+        let initial_node = Node {
+            idx: 0,
+            state: State {
+                puzzle: &puzzle,
+                variable_position: variable_position
+            },
+            depth: 0,
+            parent_idx: 0,
+        };
 
-    search_count_set(0);
-    let path = astar_solve(initial_node);
+        search_count_set(1);
+        let _ = astar_solve(initial_node);
 
-    println!("solve finished!");
+        println!("[{}] search_count: {}", i, search_count_get());
+    }
 }
