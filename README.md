@@ -4,7 +4,7 @@ AI for rush hour. Solves rushhour puzzles using A* algorithm. Implemented in Pyt
 
 ## Instructions
 
-To run the solver:
+To run the python solver:
 
 ```bash
 # python 3.6+
@@ -13,6 +13,16 @@ python src/solve.py
 # cmake 3.10+
 # run after building (should use release variant for cmake)
 "D:\rushhour_solver\src\cpp\build\Release\solver.exe" "D:/rushhour_solver/jams"
+```
+
+To run the rust solver:
+
+```bash
+# build
+cargo build --release
+
+# run
+"D:/rushhour_solver/src/rust/target/release/rust.exe" --jamdir D:/rushhour_solver/jams
 ```
 
 ## Folder Structure
@@ -123,6 +133,58 @@ I don't expect much faster with this algorithm -->
 total: (41572774 ms)
 ```
 
+## Rust
+
+Use WSL with GDB. I have tried other options and this is what worked best for me.
+
+Total: approx 110 seconds
+
+<!-- yes, i am surprised it is slower than the C++ impl too
+i guess my rust impl is not written as well as my C++ impl -->
+
+```
+[1] search_count: 11587
+[2] search_count: 32529
+[3] search_count: 7814
+[4] search_count: 3491
+[5] search_count: 24639
+[6] search_count: 16980
+[7] search_count: 61014
+[8] search_count: 6470
+[9] search_count: 5913
+[10] search_count: 16197
+[11] search_count: 6895
+[12] search_count: 11686
+[13] search_count: 75397
+[14] search_count: 121979
+[15] search_count: 3188
+[16] search_count: 23095
+[17] search_count: 19682
+[18] search_count: 13923
+[19] search_count: 3589
+[20] search_count: 14761
+[21] search_count: 1697
+[22] search_count: 32603
+[23] search_count: 19479
+[24] search_count: 45544
+[25] search_count: 82852
+[26] search_count: 40089
+[27] search_count: 21351
+[28] search_count: 16727
+[29] search_count: 38335
+[30] search_count: 8633
+[31] search_count: 33193
+[32] search_count: 3292
+[33] search_count: 36603
+[34] search_count: 37544
+[35] search_count: 34035
+[36] search_count: 22229
+[37] search_count: 15270
+[38] search_count: 28612
+[39] search_count: 24877
+[40] search_count: 24467
+```
+
 ## References
 
 * Rush Hour Web Assembly Game (written by me):
@@ -133,3 +195,4 @@ total: (41572774 ms)
 * Inspirations for solve algorithm:
     * Java Rush Hour Solve Algorithm: https://github.com/saschazar21/rushhour
     * A* Search Algorithm: https://en.wikipedia.org/wiki/A*_search_algorithm
+    * Sudoku Solver: https://github.com/nathanesau/sudoku_solver
