@@ -5,41 +5,34 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "type": "lldb",
+            "name": "(Windows) Launch",
+            "type": "cppvsdbg",
             "request": "launch",
-            "name": "Debug executable 'rust'",
-            "cargo": {
-                "args": [
-                    "build",
-                    "--bin=rust",
-                    "--package=rust"
-                ],
-                "filter": {
-                    "name": "rust",
-                    "kind": "bin"
-                }
-            },
-            "args": [],
-            "cwd": "${workspaceFolder}"
+            "program": "${workspaceFolder}/target/debug/rust.exe",
+            "args": ["--jamdir", "D:/rushhour_solver/jams"],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "console": "integratedTerminal"
         },
         {
-            "type": "lldb",
+            "name": "(gdb) Launch",
+            "type": "cppdbg",
             "request": "launch",
-            "name": "Debug unit tests in executable 'rust'",
-            "cargo": {
-                "args": [
-                    "test",
-                    "--no-run",
-                    "--bin=rust",
-                    "--package=rust"
-                ],
-                "filter": {
-                    "name": "rust",
-                    "kind": "bin"
+            "program": "${workspaceFolder}/target/debug/rust",
+            "args": ["--jamdir", "/mnt/d/rushhour_solver/jams"],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "console": "integratedTerminal",
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
                 }
-            },
-            "args": [],
-            "cwd": "${workspaceFolder}"
+            ]
         }
     ]
 }

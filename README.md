@@ -128,6 +128,10 @@ I don't expect much faster with this algorithm -->
 total: (41572774 ms)
 ```
 
+## Rust
+
+Use WSL with GDB. I have tried other options and this is what worked best for me.
+
 ## References
 
 * Rush Hour Web Assembly Game (written by me):
