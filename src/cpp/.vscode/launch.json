@@ -5,10 +5,14 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python: Current File",
-            "type": "python",
+            "name": "(Windows) Launch",
+            "type": "cppvsdbg",
             "request": "launch",
-            "program": "${file}",
+            "program": "${workspaceFolder}/build/Debug/solver.exe",
+            "args": ["D:/rushhour_solver/jams"],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
             "console": "integratedTerminal"
         }
     ]

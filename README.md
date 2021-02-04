@@ -9,6 +9,10 @@ To run the python solver:
 ```bash
 # python 3.6+
 python src/solve.py
+
+# cmake 3.10+
+# run after building (should use release variant for cmake)
+"D:\rushhour_solver\src\cpp\build\Release\solver.exe" "D:/rushhour_solver/jams"
 ```
 
 To run the rust solver:
@@ -23,7 +27,11 @@ To run the rust solver:
 
 ## Results
 
-Solver Results. Most solves are less than a second, but some can take a minute or two. Could be implemented in C++ if faster solve is required.
+Solver Results.
+
+### Python
+
+Total: 359.4311 seconds
 
 ```
 finished solve for jam 1 (elapsed = 0:00:00.920000, search_count = 11587
@@ -66,6 +74,58 @@ finished solve for jam 37 (elapsed = 0:00:02.174012, search_count = 15270
 finished solve for jam 38 (elapsed = 0:00:05.813989, search_count = 28034
 finished solve for jam 39 (elapsed = 0:00:05.022875, search_count = 24792
 finished solve for jam 40 (elapsed = 0:00:04.781983, search_count = 24467
+```
+
+### Cpp
+
+Total: 41.572774 seconds
+
+<!-- a more optimal C++ implementation for same algorithm could maybe get 20 seconds
+copying of states should be improved
+I don't expect much faster with this algorithm -->
+
+```
+[1] search count: 11587 (97553 ms)
+[2] search count: 33503 (920993 ms)
+[3] search count: 7814 (56069 ms)
+[4] search count: 3491 (21607 ms)
+[5] search count: 24135 (482325 ms)
+[6] search count: 16980 (283643 ms)
+[7] search count: 61014 (2204841 ms)
+[8] search count: 6470 (90286 ms)
+[9] search count: 5913 (71611 ms)
+[10] search count: 16197 (260467 ms)
+[11] search count: 6895 (50547 ms)
+[12] search count: 11686 (103831 ms)
+[13] search count: 75397 (5164445 ms)
+[14] search count: 121252 (11428597 ms)
+[15] search count: 3188 (39917 ms)
+[16] search count: 23095 (527619 ms)
+[17] search count: 19682 (310663 ms)
+[18] search count: 13923 (170341 ms)
+[19] search count: 3589 (41118 ms)
+[20] search count: 15314 (231643 ms)
+[21] search count: 1697 (13087 ms)
+[22] search count: 32603 (881978 ms)
+[23] search count: 20431 (374592 ms)
+[24] search count: 45552 (1289630 ms)
+[25] search count: 82852 (5279277 ms)
+[26] search count: 40089 (1508133 ms)
+[27] search count: 21362 (401149 ms)
+[28] search count: 16727 (301042 ms)
+[29] search count: 38335 (1202183 ms)
+[30] search count: 8633 (88789 ms)
+[31] search count: 33130 (1021219 ms)
+[32] search count: 3292 (30677 ms)
+[33] search count: 36603 (1497901 ms)
+[34] search count: 37556 (1104451 ms)
+[35] search count: 34035 (1090497 ms)
+[36] search count: 22229 (442613 ms)
+[37] search count: 15270 (307541 ms)
+[38] search count: 28612 (668606 ms)
+[39] search count: 24877 (684687 ms)
+[40] search count: 24467 (574323 ms)
+total: (41572774 ms)
 ```
 
 ## References
