@@ -1,0 +1,2 @@
+# https://stackoverflow.com/questions/19052834/is-it-possible-to-exclude-files-from-git-language-statistics
+src/cpp/catch* linguist-generated
