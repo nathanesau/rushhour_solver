@@ -5,7 +5,7 @@ import rushhour.Solver;
  */
 public class TestSolutions {
 
-    static void testSolutionProject() throws Exception {
+    public static void main(String[] args) throws Exception {
 
         String[][] files = {
             {"D:/_input/A00.txt", "D:/_output/A00.txt"},
