@@ -1,198 +1,118 @@
 # rushhour_solver
 
-AI for rush hour. Solves rushhour puzzles using A* algorithm. Implemented in Python.
+Solve RushHour puzzles using Dijkstra's Algorithm.
 
-## Instructions
-
-To run the python solver:
-
-```bash
-# python 3.6+
-python src/solve.py
-
-# cmake 3.10+
-# run after building (should use release variant for cmake)
-"D:\rushhour_solver\src\cpp\build\Release\solver.exe" "D:/rushhour_solver/jams"
-```
-
-To run the rust solver:
-
-```bash
-# build
-cargo build --release
-
-# run
-"D:/rushhour_solver/src/rust/target/release/rust.exe" --jamdir D:/rushhour_solver/jams
-```
-
-## Folder Structure
-
-* jams: Test Cases
-* python: A* solver implemented using Python (less than 200 lines)
+See the [docs](docs/README.md) for a detailed a explanation of the algorithm.
 
 ## Results
 
-Solver Results.
-
-### Python
-
-Total: 359.4311 seconds
+C++
 
 ```
-finished solve for jam 1 (elapsed = 0:00:00.920000, search_count = 11587
-finished solve for jam 2 (elapsed = 0:00:08.125838, search_count = 32850
-finished solve for jam 3 (elapsed = 0:00:00.413685, search_count = 7856
-finished solve for jam 4 (elapsed = 0:00:00.127007, search_count = 3427
-finished solve for jam 5 (elapsed = 0:00:03.745302, search_count = 24220
-finished solve for jam 6 (elapsed = 0:00:01.927614, search_count = 16927
-finished solve for jam 7 (elapsed = 0:00:19.109896, search_count = 61026
-finished solve for jam 8 (elapsed = 0:00:00.597996, search_count = 6470
-finished solve for jam 9 (elapsed = 0:00:00.425014, search_count = 5928
-finished solve for jam 10 (elapsed = 0:00:02.139001, search_count = 15891
-finished solve for jam 11 (elapsed = 0:00:00.388999, search_count = 6859
-finished solve for jam 12 (elapsed = 0:00:01.037000, search_count = 11686
-finished solve for jam 13 (elapsed = 0:00:38.607385, search_count = 72340
-finished solve for jam 14 (elapsed = 0:01:59.787784, search_count = 112095
-finished solve for jam 15 (elapsed = 0:00:00.186012, search_count = 3188
-finished solve for jam 16 (elapsed = 0:00:03.512013, search_count = 22853
-finished solve for jam 17 (elapsed = 0:00:02.599997, search_count = 19809
-finished solve for jam 18 (elapsed = 0:00:01.514003, search_count = 13916
-finished solve for jam 19 (elapsed = 0:00:00.156012, search_count = 3589
-finished solve for jam 20 (elapsed = 0:00:01.688984, search_count = 12623
-finished solve for jam 21 (elapsed = 0:00:00.047999, search_count = 1697
-finished solve for jam 22 (elapsed = 0:00:07.391000, search_count = 32204
-finished solve for jam 23 (elapsed = 0:00:03.114997, search_count = 19901
-finished solve for jam 24 (elapsed = 0:00:11.387999, search_count = 46321
-finished solve for jam 25 (elapsed = 0:00:47.222471, search_count = 81562
-finished solve for jam 26 (elapsed = 0:00:11.662998, search_count = 40089
-finished solve for jam 27 (elapsed = 0:00:03.489997, search_count = 21351
-finished solve for jam 28 (elapsed = 0:00:02.378084, search_count = 16767
-finished solve for jam 29 (elapsed = 0:00:09.390998, search_count = 38396
-finished solve for jam 30 (elapsed = 0:00:00.732001, search_count = 8610
-finished solve for jam 31 (elapsed = 0:00:07.832997, search_count = 33193
-finished solve for jam 32 (elapsed = 0:00:00.181015, search_count = 3292
-finished solve for jam 33 (elapsed = 0:00:08.625361, search_count = 36586
-finished solve for jam 34 (elapsed = 0:00:09.428000, search_count = 37431
-finished solve for jam 35 (elapsed = 0:00:07.986791, search_count = 34141
-finished solve for jam 36 (elapsed = 0:00:03.755999, search_count = 22661
-finished solve for jam 37 (elapsed = 0:00:02.174012, search_count = 15270
-finished solve for jam 38 (elapsed = 0:00:05.813989, search_count = 28034
-finished solve for jam 39 (elapsed = 0:00:05.022875, search_count = 24792
-finished solve for jam 40 (elapsed = 0:00:04.781983, search_count = 24467
+solved jam01 in 0.045076 seconds (node count = 11586)
+solved jam02 in 0.201284 seconds (node count = 33886)
+solved jam03 in 0.023817 seconds (node count = 7799)
+solved jam04 in 0.011589 seconds (node count = 3490)
+solved jam05 in 0.146569 seconds (node count = 24066)
+solved jam06 in 0.089744 seconds (node count = 16917)
+solved jam07 in 0.280209 seconds (node count = 56221)
+solved jam08 in 0.044166 seconds (node count = 6469)
+solved jam09 in 0.036175 seconds (node count = 5933)
+solved jam10 in 0.098053 seconds (node count = 16196)
+solved jam11 in 0.026874 seconds (node count = 6858)
+solved jam12 in 0.046308 seconds (node count = 11685)
+solved jam13 in 0.521913 seconds (node count = 72544)
+solved jam14 in 0.867875 seconds (node count = 116280)
+solved jam15 in 0.021446 seconds (node count = 3187)
+solved jam16 in 0.124391 seconds (node count = 23103)
+solved jam17 in 0.115059 seconds (node count = 19640)
+solved jam18 in 0.05918 seconds (node count = 13895)
+solved jam19 in 0.016408 seconds (node count = 3588)
+solved jam20 in 0.070274 seconds (node count = 12483)
+solved jam21 in 0.005602 seconds (node count = 1696)
+solved jam22 in 0.208542 seconds (node count = 32414)
+solved jam23 in 0.117906 seconds (node count = 19884)
+solved jam24 in 0.235652 seconds (node count = 46320)
+solved jam25 in 0.560147 seconds (node count = 81942)
+solved jam26 in 0.251328 seconds (node count = 40854)
+solved jam27 in 0.110104 seconds (node count = 21339)
+solved jam28 in 0.092958 seconds (node count = 15557)
+solved jam29 in 0.23098 seconds (node count = 38405)
+solved jam30 in 0.041215 seconds (node count = 8609)
+solved jam31 in 0.178864 seconds (node count = 33028)
+solved jam32 in 0.016812 seconds (node count = 3271)
+solved jam33 in 0.231987 seconds (node count = 36608)
+solved jam34 in 0.219605  seconds (node count = 37390)
+solved jam35 in 0.180512 seconds (node count = 34067)
+solved jam36 in 0.141356 seconds (node count = 22759)
+solved jam37 in 0.093657 seconds (node count = 15269)
+solved jam38 in 0.15607 seconds (node count = 28513)
+solved jam39 in 0.15541 3seconds (node count = 24881)
+solved jam40 in 0.157726 seconds (node count = 24466)
 ```
 
-### Cpp
-
-Total: 41.572774 seconds
-
-<!-- a more optimal C++ implementation for same algorithm could maybe get 20 seconds
-copying of states should be improved
-I don't expect much faster with this algorithm -->
+Python:
 
 ```
-[1] search count: 11587 (97553 ms)
-[2] search count: 33503 (920993 ms)
-[3] search count: 7814 (56069 ms)
-[4] search count: 3491 (21607 ms)
-[5] search count: 24135 (482325 ms)
-[6] search count: 16980 (283643 ms)
-[7] search count: 61014 (2204841 ms)
-[8] search count: 6470 (90286 ms)
-[9] search count: 5913 (71611 ms)
-[10] search count: 16197 (260467 ms)
-[11] search count: 6895 (50547 ms)
-[12] search count: 11686 (103831 ms)
-[13] search count: 75397 (5164445 ms)
-[14] search count: 121252 (11428597 ms)
-[15] search count: 3188 (39917 ms)
-[16] search count: 23095 (527619 ms)
-[17] search count: 19682 (310663 ms)
-[18] search count: 13923 (170341 ms)
-[19] search count: 3589 (41118 ms)
-[20] search count: 15314 (231643 ms)
-[21] search count: 1697 (13087 ms)
-[22] search count: 32603 (881978 ms)
-[23] search count: 20431 (374592 ms)
-[24] search count: 45552 (1289630 ms)
-[25] search count: 82852 (5279277 ms)
-[26] search count: 40089 (1508133 ms)
-[27] search count: 21362 (401149 ms)
-[28] search count: 16727 (301042 ms)
-[29] search count: 38335 (1202183 ms)
-[30] search count: 8633 (88789 ms)
-[31] search count: 33130 (1021219 ms)
-[32] search count: 3292 (30677 ms)
-[33] search count: 36603 (1497901 ms)
-[34] search count: 37556 (1104451 ms)
-[35] search count: 34035 (1090497 ms)
-[36] search count: 22229 (442613 ms)
-[37] search count: 15270 (307541 ms)
-[38] search count: 28612 (668606 ms)
-[39] search count: 24877 (684687 ms)
-[40] search count: 24467 (574323 ms)
-total: (41572774 ms)
+solved jam1 in 0.078999 seconds (node_count = 11632)
+solved jam2 in 0.374999 seconds (node_count = 32378)
+solved jam3 in 0.04 seconds (node_count = 7833)
+solved jam4 in 0.021001 seconds (node_count = 3426)
+solved jam5 in 0.212002 seconds (node_count = 22863)
+solved jam6 in 0.138997 seconds (node_count = 16979)
+solved jam7 in 0.547 seconds (node_count = 56795)
+solved jam8 in 0.068 seconds (node_count = 6469)
+solved jam9 in 0.051002 seconds (node_count = 5912)
+solved jam10 in 0.142 seconds (node_count = 15435)
+solved jam11 in 0.042 seconds (node_count = 6894)
+solved jam12 in 0.078 seconds (node_count = 11685)
+solved jam13 in 0.115004 seconds (node_count = 76561)
+solved jam14 in 0.268997 seconds (node_count = 121157)
+solved jam15 in 0.031999 seconds (node_count = 3187)
+solved jam16 in 0.195001 seconds (node_count = 23289)
+solved jam17 in 0.161999 seconds (node_count = 19708)
+solved jam18 in 0.095003 seconds (node_count = 13917)
+solved jam19 in 0.022997 seconds (node_count = 3584)
+solved jam20 in 0.134002 seconds (node_count = 13520)
+solved jam21 in 0.009999 seconds (node_count = 1696)
+solved jam22 in 0.341 seconds (node_count = 32734)
+solved jam23 in 0.157 seconds (node_count = 18561)
+solved jam24 in 0.371999 seconds (node_count = 45837)
+solved jam25 in 0.947002 seconds (node_count = 81627)
+solved jam26 in 0.384998 seconds (node_count = 40103)
+solved jam27 in 0.178 seconds (node_count = 21361)
+solved jam28 in 0.143001 seconds (node_count = 15454)
+solved jam29 in 0.346999 seconds (node_count = 38411)
+solved jam30 in 0.065 seconds (node_count = 8632)
+solved jam31 in 0.288 seconds (node_count = 32985)
+solved jam32 in 0.029002 seconds (node_count = 3291)
+solved jam33 in 0.338 seconds (node_count = 37589)
+solved jam34 in 0.318 seconds (node_count = 37420)
+solved jam35 in 0.288 seconds (node_count = 34143)
+solved jam36 in 0.19 seconds (node_count = 22199)
+solved jam37 in 0.138 seconds (node_count = 15269)
+solved jam38 in 0.261002 seconds (node_count = 29290)
+solved jam39 in 0.225003 seconds (node_count = 24791)
+solved jam40 in 0.225997 seconds (node_count = 24466)
 ```
 
-## Rust
+## Instructions
 
-Use WSL with GDB. I have tried other options and this is what worked best for me.
+Run the Python tests:
 
-Total: approx 110 seconds
-
-<!-- yes, i am surprised it is slower than the C++ impl too
-i guess my rust impl is not written as well as my C++ impl -->
-
+```bash
+pytest -s src/python
 ```
-[1] search_count: 11587
-[2] search_count: 32529
-[3] search_count: 7814
-[4] search_count: 3491
-[5] search_count: 24639
-[6] search_count: 16980
-[7] search_count: 61014
-[8] search_count: 6470
-[9] search_count: 5913
-[10] search_count: 16197
-[11] search_count: 6895
-[12] search_count: 11686
-[13] search_count: 75397
-[14] search_count: 121979
-[15] search_count: 3188
-[16] search_count: 23095
-[17] search_count: 19682
-[18] search_count: 13923
-[19] search_count: 3589
-[20] search_count: 14761
-[21] search_count: 1697
-[22] search_count: 32603
-[23] search_count: 19479
-[24] search_count: 45544
-[25] search_count: 82852
-[26] search_count: 40089
-[27] search_count: 21351
-[28] search_count: 16727
-[29] search_count: 38335
-[30] search_count: 8633
-[31] search_count: 33193
-[32] search_count: 3292
-[33] search_count: 36603
-[34] search_count: 37544
-[35] search_count: 34035
-[36] search_count: 22229
-[37] search_count: 15270
-[38] search_count: 28612
-[39] search_count: 24877
-[40] search_count: 24467
+
+Run the C++ tests:
+
+```bash
+# build with cmake
+"F:\rushhour_solver\src\cpp\build\Release\test.exe"
 ```
 
 ## References
 
 * Rush Hour Web Assembly Game (written by me):
     * Site Link: https://nathanesau.github.io/rushhour_wasm/rushhour.html 
-    * GitHub Link #1: https://github.com/nathanesau/rushhour_wasm
-    * GitHub Link #2: https://github.com/nathanesau/rushhour
-
-* Inspirations for solve algorithm:
-    * Java Rush Hour Solve Algorithm: https://github.com/saschazar21/rushhour
-    * A* Search Algorithm: https://en.wikipedia.org/wiki/A*_search_algorithm
-    * Sudoku Solver: https://github.com/nathanesau/sudoku_solver
+    * GitHub Link: https://github.com/nathanesau/rushhour

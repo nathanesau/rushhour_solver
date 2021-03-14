@@ -1,5 +1,6 @@
-# build files
-src/rust/target
+# python files
+__pycache__
+*.pyc
 
-# temporary code files
-old.rs
+# cpp files
+build
