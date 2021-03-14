@@ -11,6 +11,8 @@ public class Metadata {
 
     Character grid[][] = new Character[6][6];
 
+    Character x;
+
     Set<Character> cars = new HashSet<Character>();
 
     Map<Character, List<Integer[]>> tiles = new HashMap<Character, List<Integer[]>>();
@@ -41,6 +43,8 @@ public class Metadata {
                 tiles.get(grid[i][j]).add(new Integer[] { i, j });
             }
         }
+
+        this.x = cars.contains('X') ? 'X' : 'x';
 
         for (Character car : cars) {
             orientation.put(car, (tiles.get(car).get(0)[0] != tiles.get(car).get(1)[0]));

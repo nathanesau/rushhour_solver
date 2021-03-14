@@ -3,10 +3,13 @@ import java.util.Map.Entry;
 
 import rushhour.Solver;
 
+/**
+ * Show runtime for each test case
+ */
 public class TestSolver {
  
-    public static void main(String[] args) {
-        
+    static void testSolveJams() {
+
         Map<String, String> jams = Map.ofEntries(
             Map.entry("jam01", "bb...g\na..c.g\naxxc.g\na..c..\ne...ff\ne.ddd."),
             Map.entry("jam02", "a..eee\na..f.j\nxx.fgj\nbbb.gj\n..d.hh\nccdii."),
@@ -50,16 +53,74 @@ public class TestSolver {
             Map.entry("jam40", "eaa.f.\negd.fj\negdxxj\nbbbh.j\n..chii\nkkcll.")
         );
 
-
         for (Entry<String, String> entry : jams.entrySet()) {
             String k = entry.getKey();
             String jam = entry.getValue();
 
             double startTime = System.currentTimeMillis();
-            Solver.solveJam(jam);
+            Solver.solve(jam);
             double endTime = System.currentTimeMillis();
 
             System.out.printf("solved %s in %.2f seconds\n", k, (endTime - startTime) / 1000);
         }
+    }
+
+    static void testSolveProject() {
+
+        Map<String, String> project = Map.ofEntries(
+            Map.entry("A00", "AA...O\n.....O\nXX...O\n...QQQ\n....CC\n..RRR."),
+            Map.entry("A01", "AA...O\nP..Q.O\nPXXQ.O\nP..Q..\nB...CC\nB.RRR."),
+            Map.entry("A02", "A..OOO\nA..B.P\nXX.BCP\nQQQ.CP\n..D.EE\nFFDGG."),
+            Map.entry("A03", "......\n......\n.XXO..\n.AAO.P\n.B.O.P\n.BCC.P"),
+            Map.entry("A04", "O..P..\nO..P..\nOXXP..\n..AQQQ\n..A..B\n..RRRB"),
+            Map.entry("A05", "AA.O.B\nP..OQB\nPXXOQG\nPRRRQG\nD...EE\nD...FF"),
+            Map.entry("A06", "AA.B..\nCC.BOP\n.XXQOP\nDDEQOP\nF.EQ..\nF..RRR"),
+            Map.entry("A07", ".ABBCD\n.A.ECD\n.XXE.F\n..II.F\n...H..\n...H.."),
+            Map.entry("A08", "...AAO\n..BBCO\nXXDECO\nFFDEGG\nHHIPPP\nKKIQQQ"),
+            Map.entry("A09", ".ABBCC\n.A.DEE\nXX.DOF\nPQQQOF\nP.G.OH\nP.G..H"),
+            Map.entry("A10", "AAB.CC\nDDB..O\nPXX..O\nPQQQ.O\nP..EFF\nGG.EHH"),
+            Map.entry("B11", "OAAP..\nO..P..\nOXXP..\n..BQQQ\n..B..E\n..RRRE"),
+            Map.entry("B12", "ABB..O\nA.P..O\nXXP..O\n..PQQQ\n....C.\nRRR.C."),
+            Map.entry("B13", "AABBC.\n..D.CO\n.EDXXO\nPE.FFO\nP..GHH\nPIIGKK"),
+            Map.entry("B14", "AAB...\n..BCC.\nDEXXFG\nDEHHFG\n..IJJ.\nKKI..."),
+            Map.entry("B15", ".AABB.\nCCDDOP\nQRXXOP\nQREFOP\nQREFGG\n.HHII."),
+            Map.entry("B16", "AABBCO\nD.EECO\nDFPXXO\n.FPQQQ\n..P...\nGG...."),
+            Map.entry("B17", "AOOO..\nA.BBCC\nXXD...\nEEDP..\nQQQPFG\nRRRPFG"),
+            Map.entry("B18", "AABO..\nCCBO..\nPXXO..\nPQQQ..\nPDD...\nRRR..."),
+            Map.entry("B19", "..ABB.\n..A.J.\n.DXXJ.\n.DEEF.\n.OOOF.\n......"),
+            Map.entry("B20", "A..OOO\nABBC..\nXXDC.P\n..D..P\n..EFFP\n..EQQQ"),
+            Map.entry("C21", "AABO..\nP.BO..\nPXXO..\nPQQQ..\n......\n...RRR"),
+            Map.entry("C22", "..AOOO\nB.APCC\nBXXP..\n.D.PEE\nFDGG.H\nFQQQ.H"),
+            Map.entry("C23", "..OOOP\n..ABBP\n..AXXP\n..CDEE\n..CDFF\n..QQQ."),
+            Map.entry("C24", "..ABB.\n.CA...\nDCXXE.\nDFF.E.\nOOO.G.\nCC..G."),
+            Map.entry("C25", "AAB.CC\nDDB..O\nPXX.EO\nPQQQEO\nPF.GHH\n.F.GII"),
+            Map.entry("C26", ".A.OOO\nBA.CP.\nBXXCPD\nERRRPD\nE.F..G\n..FHHG"),
+            Map.entry("C27", "ABBO..\nACCO..\nXXDO.P\n..DEEP\n..F..P\n..FRRR"),
+            Map.entry("C28", "OOO.P.\n..A.P.\nXXA.PB\nCDDEEB\nCFFG.H\nRRRG.H"),
+            Map.entry("C29", "O.APPP\nO.AB..\nOXXB..\nCCDD.Q\n.....Q\nEEFF.Q"),
+            Map.entry("D30", "AA.OOO\n...BCC\nDXXB.P\nD.QEEP\nFFQ..P\n..QRRR"),
+            Map.entry("D31", "AAOBCC\n..OB..\nXXO...\nDEEFFP\nD..K.P\nHH.K.P"),
+            Map.entry("D32", ".AR.BB\n.AR...\nXXR...\nIDDEEP\nIFFGHP\nQQQGHP"),
+            Map.entry("D33", "A..RRR\nA..B.P\nXX.BCP\nQQQDCP\n..EDFF\nIIEHH."),
+            Map.entry("D34", "..OAAP\n..OB.P\nXXOB.P\nKQQQ..\nKDDEF.\nGG.EF."),
+            Map.entry("D35", "OPPPAA\nOBCC.Q\nOBXX.Q\nRRRD.Q\n..EDFF\nGGE...")
+        );
+
+        for (Entry<String, String> entry : project.entrySet()) {
+            String k = entry.getKey();
+            String jam = entry.getValue();
+
+            double startTime = System.currentTimeMillis();
+            String instruction = Solver.solve(jam);
+            double endTime = System.currentTimeMillis();
+
+            System.out.printf("solved %s in %.2f seconds\n", k, (endTime - startTime) / 1000);
+        }
+    }
+
+    public static void main(String[] args) {
+        
+        testSolveJams();
+        testSolveProject();
     }
 }

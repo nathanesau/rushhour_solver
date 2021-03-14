@@ -1,5 +1,13 @@
 package rushhour;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.Writer;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -8,6 +16,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.Map.Entry;
 
 public class Solver {
@@ -28,7 +37,7 @@ public class Solver {
             Integer fp = metadata.fixedPosition.get(car);
             Integer vp = u.get(car);
 
-            if (car.equals('x') && vp + size > 6) {
+            if (car.equals(metadata.x) && vp + size > 6) {
                 size -= 1;
             }
 
@@ -74,7 +83,7 @@ public class Solver {
 
             for (int np = vp + size; np <= 6; np++) {
                 if ((np < 6 && orientation && grid[np][fp] != '.') || (np < 6 && !orientation && grid[fp][np] != '.')
-                        || (np == 6 && !car.equals('x'))) {
+                        || (np == 6 && !car.equals(metadata.x))) {
                     break;
                 }
 
@@ -123,7 +132,7 @@ public class Solver {
                 @Override
                 public int compare(Map.Entry<Integer, Map<Character, Integer>> a1,
                         Map.Entry<Integer, Map<Character, Integer>> a2) {
-                    return a1.getKey().compareTo(a1.getKey());
+                    return a1.getKey().compareTo(a2.getKey());
                 }
             });
 
@@ -132,7 +141,7 @@ public class Solver {
             Integer distu = item.getKey();
             Map<Character, Integer> u = item.getValue();
 
-            if (u.get('x') == 5) {
+            if (u.get(metadata.x) == 5) {
                 return shortest_path(prev, src, u);
             }
 
@@ -149,12 +158,33 @@ public class Solver {
         return Arrays.asList();
     }
 
+    static String convertPathToInstruction(List<Map<Character, Integer>> path, Metadata metadata) {
+        String instruction = "";
+
+        for (int i = 1; i < path.size(); i++) {
+            var currEntry = path.get(i);
+            var prevEntry = path.get(i-1);
+            for (Character car : currEntry.keySet()) {
+                if (!currEntry.get(car).equals(prevEntry.get(car))) {
+                    Integer d = currEntry.get(car) - prevEntry.get(car);
+                    Boolean v = metadata.orientation.get(car);
+                    instruction += String.format("%s%s%d\n", car,
+                            (v && d > 0) ? "D" : (v && d < 0) ? "U" : (d > 0) ? "R" : "L",
+                            (car.equals(metadata.x)) ? Math.abs(d) - 1 : Math.abs(d)
+                    );
+                }
+            }
+        }
+
+        return instruction;
+    }
+
     /**
      * Alternative solve method that doesn't require reading/writing to files.
      * 
      * @param jam bb...g\na..c.g\naxxc.g\na..c..\ne...ff\ne.ddd. or similar
      */
-    public static List<Map<Character, Integer>> solveJam(String jam) {
+    public static String solve(String jam) {
 
         Character grid[][] = new Character[6][6];
 
@@ -177,12 +207,34 @@ public class Solver {
 
         var path = solve(src, metadata);
 
-        return path;
+        return convertPathToInstruction(path, metadata);
     }
 
-    public static void solveFromFile() {
+    /**
+     * Main solve method.
+     * 
+     * @param input Input file containing RushHour puzzle.
+     * @param output Output file for RushHour solution.
+     * @throws Exception if the file not found.
+     */
+    public static void solveFromFile(String input, String output)
+            throws Exception {
 
-        // TODO
+        String jam = "";
+        try (BufferedReader reader = Files.newBufferedReader(Paths.get(input))) {
+            String line = null;
+            do {
+                line = reader.readLine(); 
+                if (line != null) { jam += line + "\n"; }
+            }
+            while (line != null && !line.isEmpty());
+        }
+
+        String instruction = solve(jam);
+        try (Writer writer = Files.newBufferedWriter(Paths.get(output),
+                Charset.defaultCharset())) {
+            writer.write(instruction);
+        }
     }
 
 }
