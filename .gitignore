@@ -1,6 +1,10 @@
 # python files
 __pycache__
 *.pyc
+.pytest_cache
 
 # cpp files
 build
+
+# java files
+*.class
