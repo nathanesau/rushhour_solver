@@ -70,7 +70,7 @@ project = {
     "C21": "AABO..\nP.BO..\nPXXO..\nPQQQ..\n......\n...RRR",
     "C22": "..AOOO\nB.APCC\nBXXP..\n.D.PEE\nFDGG.H\nFQQQ.H",
     "C23": "..OOOP\n..ABBP\n..AXXP\n..CDEE\n..CDFF\n..QQQ.",
-    "C24": "..ABB.\n.CA...\nDCXXE.\nDFF.E.\nOOO.G.\nCC..G.",
+    "C24": "..ABB.\n.CA...\nDCXXE.\nDFF.E.\nOOO.G.\nHH..G.",
     "C25": "AAB.CC\nDDB..O\nPXX.EO\nPQQQEO\nPF.GHH\n.F.GII",
     "C26": ".A.OOO\nBA.CP.\nBXXCPD\nERRRPD\nE.F..G\n..FHHG",
     "C27": "ABBO..\nACCO..\nXXDO.P\n..DEEP\n..F..P\n..FRRR",

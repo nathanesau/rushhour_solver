@@ -92,7 +92,7 @@ public class TestSolver {
             Map.entry("C21", "AABO..\nP.BO..\nPXXO..\nPQQQ..\n......\n...RRR"),
             Map.entry("C22", "..AOOO\nB.APCC\nBXXP..\n.D.PEE\nFDGG.H\nFQQQ.H"),
             Map.entry("C23", "..OOOP\n..ABBP\n..AXXP\n..CDEE\n..CDFF\n..QQQ."),
-            Map.entry("C24", "..ABB.\n.CA...\nDCXXE.\nDFF.E.\nOOO.G.\nCC..G."),
+            Map.entry("C24", "..ABB.\n.CA...\nDCXXE.\nDFF.E.\nOOO.G.\nHH..G."),
             Map.entry("C25", "AAB.CC\nDDB..O\nPXX.EO\nPQQQEO\nPF.GHH\n.F.GII"),
             Map.entry("C26", ".A.OOO\nBA.CP.\nBXXCPD\nERRRPD\nE.F..G\n..FHHG"),
             Map.entry("C27", "ABBO..\nACCO..\nXXDO.P\n..DEEP\n..F..P\n..FRRR"),
