@@ -14,7 +14,7 @@ The C++ code is slower for project cases because it uses ``map`` instead of ``un
 
 | Language | 40 Jam Cases | 35 Project Cases |
 | -------- | ------------ | ---------------- |
-| C++ | 5.8 seconds | 21.8 seconds |
+| C++ | 0.703 seconds| 0.686 seconds |
 | Python | 6.76 seconds | 6.34 seconds |
 | Java | 11.73 seconds | 12.3 seconds |
 

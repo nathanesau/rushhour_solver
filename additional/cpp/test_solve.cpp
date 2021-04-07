@@ -64,14 +64,15 @@ TEST_CASE("JAMS RUNTIME TEST", "[jams]")
         }
 
         Metadata metadata(grid);
-        std::map<char, size_t> src;
+        level_type src;
         for (auto car : metadata.cars)
         {
-            src[car] = (metadata.orientation[car]) ? metadata.tiles[car][0].first : metadata.tiles[car][0].second;
+            int car_int = (int) car - 97;
+            src[car_int] = (metadata.orientation[car]) ? metadata.tiles[car][0].first : metadata.tiles[car][0].second;
         }
 
         auto t1 = std::chrono::high_resolution_clock::now();
-        auto &path = solve(src, metadata);
+        auto path = solve(src, metadata);
         auto t2 = std::chrono::high_resolution_clock::now();
         auto duration = std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
 
@@ -83,42 +84,42 @@ TEST_CASE("JAMS RUNTIME TEST", "[jams]")
 TEST_CASE("PROJECT RUNTIME TEST", "[project]")
 {
     std::map<std::string, std::string> project = {
-        {"A00", "AA...O\n.....O\nXX...O\n...QQQ\n....CC\n..RRR."},
-        {"A01", "AA...O\nP..Q.O\nPXXQ.O\nP..Q..\nB...CC\nB.RRR."},
-        {"A02", "A..OOO\nA..B.P\nXX.BCP\nQQQ.CP\n..D.EE\nFFDGG."},
-        {"A03", "......\n......\n.XXO..\n.AAO.P\n.B.O.P\n.BCC.P"},
-        {"A04", "O..P..\nO..P..\nOXXP..\n..AQQQ\n..A..B\n..RRRB"},
-        {"A05", "AA.O.B\nP..OQB\nPXXOQG\nPRRRQG\nD...EE\nD...FF"},
-        {"A06", "AA.B..\nCC.BOP\n.XXQOP\nDDEQOP\nF.EQ..\nF..RRR"},
-        {"A07", ".ABBCD\n.A.ECD\n.XXE.F\n..II.F\n...H..\n...H.."},
-        {"A08", "...AAO\n..BBCO\nXXDECO\nFFDEGG\nHHIPPP\nKKIQQQ"},
-        {"A09", ".ABBCC\n.A.DEE\nXX.DOF\nPQQQOF\nP.G.OH\nP.G..H"},
-        {"A10", "AAB.CC\nDDB..O\nPXX..O\nPQQQ.O\nP..EFF\nGG.EHH"},
-        {"B11", "OAAP..\nO..P..\nOXXP..\n..BQQQ\n..B..E\n..RRRE"},
-        {"B12", "ABB..O\nA.P..O\nXXP..O\n..PQQQ\n....C.\nRRR.C."},
-        {"B13", "AABBC.\n..D.CO\n.EDXXO\nPE.FFO\nP..GHH\nPIIGKK"},
-        {"B14", "AAB...\n..BCC.\nDEXXFG\nDEHHFG\n..IJJ.\nKKI..."},
-        {"B15", ".AABB.\nCCDDOP\nQRXXOP\nQREFOP\nQREFGG\n.HHII."},
-        {"B16", "AABBCO\nD.EECO\nDFPXXO\n.FPQQQ\n..P...\nGG...."},
-        {"B17", "AOOO..\nA.BBCC\nXXD...\nEEDP..\nQQQPFG\nRRRPFG"},
-        {"B18", "AABO..\nCCBO..\nPXXO..\nPQQQ..\nPDD...\nRRR..."},
-        {"B19", "..ABB.\n..A.J.\n.DXXJ.\n.DEEF.\n.OOOF.\n......"},
-        {"B20", "A..OOO\nABBC..\nXXDC.P\n..D..P\n..EFFP\n..EQQQ"},
-        {"C21", "AABO..\nP.BO..\nPXXO..\nPQQQ..\n......\n...RRR"},
-        {"C22", "..AOOO\nB.APCC\nBXXP..\n.D.PEE\nFDGG.H\nFQQQ.H"},
-        {"C23", "..OOOP\n..ABBP\n..AXXP\n..CDEE\n..CDFF\n..QQQ."},
-        {"C24", "..ABB.\n.CA...\nDCXXE.\nDFF.E.\nOOO.G.\nHH..G."},
-        {"C25", "AAB.CC\nDDB..O\nPXX.EO\nPQQQEO\nPF.GHH\n.F.GII"},
-        {"C26", ".A.OOO\nBA.CP.\nBXXCPD\nERRRPD\nE.F..G\n..FHHG"},
-        {"C27", "ABBO..\nACCO..\nXXDO.P\n..DEEP\n..F..P\n..FRRR"},
-        {"C28", "OOO.P.\n..A.P.\nXXA.PB\nCDDEEB\nCFFG.H\nRRRG.H"},
-        {"C29", "O.APPP\nO.AB..\nOXXB..\nCCDD.Q\n.....Q\nEEFF.Q"},
-        {"D30", "AA.OOO\n...BCC\nDXXB.P\nD.QEEP\nFFQ..P\n..QRRR"},
-        {"D31", "AAOBCC\n..OB..\nXXO...\nDEEFFP\nD..K.P\nHH.K.P"},
-        {"D32", ".AR.BB\n.AR...\nXXR...\nIDDEEP\nIFFGHP\nQQQGHP"},
-        {"D33", "A..RRR\nA..B.P\nXX.BCP\nQQQDCP\n..EDFF\nIIEHH."},
-        {"D34", "..OAAP\n..OB.P\nXXOB.P\nKQQQ..\nKDDEF.\nGG.EF."},
-        {"D35", "OPPPAA\nOBCC.Q\nOBXX.Q\nRRRD.Q\n..EDFF\nGGE..."}
+        {"a00", "aa...o\n.....o\nxx...o\n...qqq\n....cc\n..rrr."},
+        {"a01", "aa...o\np..q.o\npxxq.o\np..q..\nb...cc\nb.rrr."},
+        {"a02", "a..ooo\na..b.p\nxx.bcp\nqqq.cp\n..d.ee\nffdgg."},
+        {"a03", "......\n......\n.xxo..\n.aao.p\n.b.o.p\n.bcc.p"},
+        {"a04", "o..p..\no..p..\noxxp..\n..aqqq\n..a..b\n..rrrb"},
+        {"a05", "aa.o.b\np..oqb\npxxoqg\nprrrqg\nd...ee\nd...ff"},
+        {"a06", "aa.b..\ncc.bop\n.xxqop\nddeqop\nf.eq..\nf..rrr"},
+        {"a07", ".abbcd\n.a.ecd\n.xxe.f\n..ii.f\n...h..\n...h.."},
+        {"a08", "...aao\n..bbco\nxxdeco\nffdegg\nhhippp\nkkiqqq"},
+        {"a09", ".abbcc\n.a.dee\nxx.dof\npqqqof\np.g.oh\np.g..h"},
+        {"a10", "aab.cc\nddb..o\npxx..o\npqqq.o\np..eff\ngg.ehh"},
+        {"b11", "oaap..\no..p..\noxxp..\n..bqqq\n..b..e\n..rrre"},
+        {"b12", "abb..o\na.p..o\nxxp..o\n..pqqq\n....c.\nrrr.c."},
+        {"b13", "aabbc.\n..d.co\n.edxxo\npe.ffo\np..ghh\npiigkk"},
+        {"b14", "aab...\n..bcc.\ndexxfg\ndehhfg\n..ijj.\nkki..."},
+        {"b15", ".aabb.\nccddop\nqrxxop\nqrefop\nqrefgg\n.hhii."},
+        {"b16", "aabbco\nd.eeco\ndfpxxo\n.fpqqq\n..p...\ngg...."},
+        {"b17", "aooo..\na.bbcc\nxxd...\needp..\nqqqpfg\nrrrpfg"},
+        {"b18", "aabo..\nccbo..\npxxo..\npqqq..\npdd...\nrrr..."},
+        {"b19", "..abb.\n..a.j.\n.dxxj.\n.deef.\n.ooof.\n......"},
+        {"b20", "a..ooo\nabbc..\nxxdc.p\n..d..p\n..effp\n..eqqq"},
+        {"c21", "aabo..\np.bo..\npxxo..\npqqq..\n......\n...rrr"},
+        {"c22", "..aooo\nb.apcc\nbxxp..\n.d.pee\nfdgg.h\nfqqq.h"},
+        {"c23", "..ooop\n..abbp\n..axxp\n..cdee\n..cdff\n..qqq."},
+        {"c24", "..abb.\n.ca...\ndcxxe.\ndff.e.\nooo.g.\nhh..g."},
+        {"c25", "aab.cc\nddb..o\npxx.eo\npqqqeo\npf.ghh\n.f.gii"},
+        {"c26", ".a.ooo\nba.cp.\nbxxcpd\nerrrpd\ne.f..g\n..fhhg"},
+        {"c27", "abbo..\nacco..\nxxdo.p\n..deep\n..f..p\n..frrr"},
+        {"c28", "ooo.p.\n..a.p.\nxxa.pb\ncddeeb\ncffg.h\nrrrg.h"},
+        {"c29", "o.appp\no.ab..\noxxb..\nccdd.q\n.....q\neeff.q"},
+        {"d30", "aa.ooo\n...bcc\ndxxb.p\nd.qeep\nffq..p\n..qrrr"},
+        {"d31", "aaobcc\n..ob..\nxxo...\ndeeffp\nd..k.p\nhh.k.p"},
+        {"d32", ".ar.bb\n.ar...\nxxr...\niddeep\niffghp\nqqqghp"},
+        {"d33", "a..rrr\na..b.p\nxx.bcp\nqqqdcp\n..edff\niiehh."},
+        {"d34", "..oaap\n..ob.p\nxxob.p\nkqqq..\nkddef.\ngg.ef."},
+        {"d35", "opppaa\nobcc.q\nobxx.q\nrrrd.q\n..edff\ngge..."}
     };
 
     for (auto &item : project)
@@ -137,14 +138,15 @@ TEST_CASE("PROJECT RUNTIME TEST", "[project]")
         }
 
         Metadata metadata(grid);
-        std::map<char, size_t> src;
+        level_type src;
         for (auto car : metadata.cars)
         {
-            src[car] = (metadata.orientation[car]) ? metadata.tiles[car][0].first : metadata.tiles[car][0].second;
+            int car_int = (int) car - 97;
+            src[car_int] = (metadata.orientation[car]) ? metadata.tiles[car][0].first : metadata.tiles[car][0].second;
         }
 
         auto t1 = std::chrono::high_resolution_clock::now();
-        auto &path = solve(src, metadata);
+        auto path = solve(src, metadata);
         auto t2 = std::chrono::high_resolution_clock::now();
         auto duration = std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
 
