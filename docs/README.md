@@ -10,13 +10,13 @@ Jam(s): http://www.mathsonline.org/game/jam.html
 
 ## Results
 
-The C++ code is slower for project cases because it uses ``map`` instead of ``unordered_map``. Using ``unordered_map`` and implementing custom hash functions would lead to better performance.
+All the solvers are fast, but C++ is the fastest.
 
 | Language | 40 Jam Cases | 35 Project Cases |
 | -------- | ------------ | ---------------- |
-| C++ | 0.703 seconds| 0.686 seconds |
+| C++ | 0.703 seconds | 0.686 seconds |
+| Java | 0.903 seconds | 0.863 seconds |
 | Python | 6.76 seconds | 6.34 seconds |
-| Java | 11.73 seconds | 12.3 seconds |
 
 ## Explanation
 

@@ -19,9 +19,9 @@ public class Metadata {
 
     Map<Character, Boolean> orientation = new HashMap<Character, Boolean>();
 
-    Map<Character, Integer> size = new HashMap<Character, Integer>();
+    int[] size = new int[26];
 
-    Map<Character, Integer> fixedPosition = new HashMap<Character, Integer>();
+    int[] fixedPosition = new int[26];
 
     Integer node_count = 0;
 
@@ -47,9 +47,10 @@ public class Metadata {
         this.x = cars.contains('X') ? 'X' : 'x';
 
         for (Character car : cars) {
+            int car_int = Character.toLowerCase(car) - 97;
             orientation.put(car, (tiles.get(car).get(0)[0] != tiles.get(car).get(1)[0]));
-            size.put(car, tiles.get(car).size());
-            fixedPosition.put(car, orientation.get(car) ? tiles.get(car).get(0)[1] : tiles.get(car).get(0)[0]);
+            size[car_int] = tiles.get(car).size();
+            fixedPosition[car_int] = orientation.get(car) ? tiles.get(car).get(0)[1] : tiles.get(car).get(0)[0];
         }
     }
 
