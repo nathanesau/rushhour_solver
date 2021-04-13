@@ -74,7 +74,7 @@ def solve(src, metadata):  # no graph or target parameters
     dist[hash(frozenset(src.items()))] = 0
     q = [(0, src)]
     while q:
-        #q = sorted(q, key=lambda it: it[0])
+        # NOTE: sorted(q, key=lambda it: it[0]) not necessary
         distu, u = q.pop(0)
         if u['x'] == 5:
             return shortest_path(prev, src, u)

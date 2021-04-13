@@ -151,10 +151,7 @@ std::vector<level_type> solve(level_type &src, Metadata &metadata)
     std::deque<std::pair<size_t, level_type>> q = {{0, src}};
     while (!q.empty())
     {
-        //std::sort(q.begin(), q.end(), [](const auto &lhs, const auto &rhs) {
-        //    return lhs.first < rhs.first;
-        //});
-
+        // NOTE: std::sort(q.begin(), q.end(), [](auto &l, auto &r) { return l.first < r.first; }) not necessary
         auto item = q[0];
         q.pop_front();
 
