@@ -8,3 +8,6 @@ build
 
 # java files
 *.class
+
+# editor files
+.vscode
