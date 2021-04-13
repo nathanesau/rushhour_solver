@@ -48,7 +48,7 @@ _ _ _ .
 
 Here is the graph for the maze:
 
-![](maze.PNG)
+![](https://user-images.githubusercontent.com/4649987/114627746-bff3b200-9c83-11eb-916d-cedef244d729.png)
 
 Which can also be represented as:
 
@@ -161,11 +161,11 @@ Here is a table summarizing the initial board. The only difference between diffe
 
 The initial graph is shown below. The vertex is the initial board and the edges are the boards 1 move away from the initial board. Note that "right 1", "right 2" and so one are all considered to be one move.
 
-![](rushhour_graph1.png)
+![](https://user-images.githubusercontent.com/4649987/114627772-cbdf7400-9c83-11eb-8274-7f793478a88e.png)
 
 We can represent this more succinctly using the variable position as I mentioned above like this:
 
-![](rushhour_graph2.png)
+![](https://user-images.githubusercontent.com/4649987/114627785-d4d04580-9c83-11eb-9081-c32c78debd16.png)
 
 ##### Algorithm
 
