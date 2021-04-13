@@ -11,3 +11,7 @@ build
 
 # editor files
 .vscode
+
+# temporary test files
+A01.txt
+A01sol.txt
