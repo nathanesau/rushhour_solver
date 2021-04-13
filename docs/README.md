@@ -2,7 +2,7 @@
 
 Team Member(s): Nathan Esau
 
-Algorithm(s): Dijkstra's Algorithm
+Algorithm(s): BFS
 
 Languages(s): C++, Python, Java
 
@@ -10,7 +10,7 @@ Jam(s): http://www.mathsonline.org/game/jam.html
 
 ## Results
 
-All the solvers are fast, but C++ is the fastest.
+The average solve time is about 0.02 seconds per puzzle. Several optimizations were used to improve the solve time. More on this later.
 
 | Language | 40 Jam Cases | 35 Project Cases |
 | -------- | ------------ | ---------------- |
@@ -20,9 +20,11 @@ All the solvers are fast, but C++ is the fastest.
 
 ## Explanation
 
-### Dijkstra's algorithm
+### Solve Algorithm
 
-It is a breadth-first search algorithm on an unweighted graph using a priority queue.
+Use breadth-first search algorithm. Store nodes in a priority queue sorted by distance.
+
+To explain how the algorithm works, I first go through how the algorithm works for a simple maze. Then I make a few modifications to the code for the Rush Hour case.
 
 #### Case #1: Simple Maze
 
@@ -93,10 +95,9 @@ graph = {
 }
 ```
 
-Which can be solved as follows:
+Which can be solved as follows using Python:
 
 ```python
-# https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm#Pseudocode
 def shortest_path(prev, src, target):
     path = []
     u = target
@@ -130,9 +131,7 @@ print(solve(graph, (3, 0), (0, 3)))
 
 ##### Graph Representation
 
-First let's discuss the graph representation for the RushHour game.
-
-As an example, let's consider Jam 1.
+First let's discuss the graph representation for the RushHour game. As an example, let's consider Jam 1 from http://www.mathsonline.org/game/jam.html.
 
 ```
 bb...g
@@ -143,7 +142,9 @@ e...ff
 e.ddd.
 ```
 
-Here we have:
+I could represent this as a 2d char array, but it can actual be represented more succinctly as ``{"a":1, "b":0, "c":1, "d":2, "e":4, "f":4, "g":0, "x":1}``. These are the left most index for horizontal cars and top most index for vertical cars. Below I will refer to these as the "variable position".
+
+Here is a table summarizing the initial board. The only difference between different "states" is the variable position. The fixed position, size of the car, orientation of the car and name of the car never changes.
 
 | car  | orientation | size | fixed position | variable position |
 | --- | ----------- | ---- | -------------- | ----------------- |
@@ -158,17 +159,21 @@ Here we have:
 
 <!-- The entire graph is not initially known like in the maze example. -->
 
-The initial graph is shown below. The vertex is the initial board and the edges are the boards 1 move away from the initial board. 
+The initial graph is shown below. The vertex is the initial board and the edges are the boards 1 move away from the initial board. Note that "right 1", "right 2" and so one are all considered to be one move.
 
 ![](rushhour_graph1.png)
 
-We can represent this more succinctly using the variable position like this:
+We can represent this more succinctly using the variable position as I mentioned above like this:
 
 ![](rushhour_graph2.png)
 
 ##### Algorithm
 
-Let's make a few modifications to the maze solver from above. Here is a full solution in 100 lines of Python code.
+Let's make a few modifications to the maze solver from above. Here is a full RushHour solver written in 100 lines of Python code. For the RushHour case, we do not know the entire graph in advance and must figure out neighbors on the fly. Other differences are the use of a Metadata class to store information which is common between different nodes and using a custom solve condition.
+
+To get the neighbors first convert the variable positions such as ``{"a":1, "b":0, "c":1, "d":2, "e":4, "f":4, "g":0, "x":1}`` back to a 2d grid. Then for each car, iterate through all possible moves and get the variable positions for each of these moves.
+
+Also, the key of our distance/ visited dictionary such as ``{"a":1, "b":0, "c":1, "d":2, "e":4, "f":4, "g":0, "x":1}`` must be hashed.
 
 ```python
 class Metadata:
@@ -273,7 +278,7 @@ end = datetime.now()
 print_solution(path, metadata, (end - start).microseconds)
 ```
 
-Let's compare the ``solve`` function for rush hour to the ``solve`` function for the maze:
+Here is a side by side comparison of the solve functions:
 
 ```python
 def maze_solve(graph, src, target):
@@ -311,128 +316,97 @@ def rushhour_solve(src, metadata):
                 q.append((alt, v))
 ```
 
-As you can see, the main solve logic (i.e. BFS with priority queue) is still in fact. A few comments:
-
-* ``target``: for rush hour the 'x' car should be on the right side of the board.
-* ``vhash``: we need to define a custom hash function for the variable position.
-* ``get_neighbors``: we need to determine all the possible boards one move away. that requires some logic.
-* ``metadata``: we cache information about the size, orientation and fixed position of cars as these don't change.
-
 ##### Solution
 
-For Jam 1, the final node count is 11586 using Dijkstra's Algorithm.
+For Jam 1 from from http://www.mathsonline.org/game/jam.html the number of nodes visited is 11,586. This gives some idea about the size of the graph. For most puzzles the number of nodes ranges between 1,000 to 100,000.
 
-Jam 1: Initial
-
-```
-bb...g
-a..c.g
-axxc.g
-a..c..
-e...ff
-e.ddd.
-```
-
-Jam 1: Move #1: ``ff`` goes left two squares.
+Here is a solution for Jam 1:
 
 ```
-bb...g
-a..c.g
-axxc.g
-a..c..
-eff...
-e.ddd.
-```
+bb...g         bb...g         bb....         .bb...         abb...         
+a..c.g         a..c.g         a..c..         a..c..         a..c..         
+axxc.g  (fL3)  axxc.g  (gd3)  axxc..  (bR1)  axxc..  (aU1)  axxc..  (eU1)  
+a..c..         a..c..         a..c.g         a..c.g         ...c.g         
+e...ff         eff...         eff..g         eff..g         eff..g         
+e.ddd.         e.ddd.         e.dddg         e.dddg         e.dddg         
 
-Jam 1: Move #2: ``ggg`` goes down two squares.
-
-```
-bb....
-a..c..
-axxc..
-a..c.g
-eff..g
-e.dddg
-```
-
-Jam 1: Move #3: ``bb`` goes right 1 square.
-
-```
-.bb...
-a..c..
-axxc..
-a..c.g
-eff..g
-e.dddg
-```
-
-Jam 1: Move #4: ``aaa`` goes up 1 square.
-
-```
-abb...
-a..c..
-axxc..
-...c.g
-eff..g
-e.dddg
-```
-
-Jam 1: Move #5: ``ee`` goes up 1 square.
-
-```
-abb...
-a..c..
-axxc..
-e..c.g
-eff..g
-..dddg
-```
-
-Jam 1: Move #6: ``dd`` goes left two squares.
-
-```
-abb...
-a..c..
-axxc..
-e..c.g
-eff..g
-ddd..g
-```
-
-Jam 1: Move #7: ``ccc`` goes down two squares.
-
-```
-abb...
-a.....
-axx...
-e..c.g
-effc.g
-dddc.g
-```
-
-Jam 1: Move #8: ``x`` goes right three squares.
-
-```
-abb...
-a.....
-a....x
-e..c.g
-effc.g
-dddc.g
+abb...         abb...          abb...
+a..c..         a..c..          a.....
+axxc..  (dL2)  axxc..  (cD2)   axx...  (xR3)
+e..c.g         e..c.g          e..c.g
+eff..g         eff..g          effc.g
+..dddg         ddd..g          dddc.g
 ```
 
 ## Optimizations
 
-We do not need to sort the priority queue for this case, which saves some time.
+Sorting the priority queue isn't necessary.
+
+* It turns out that we don't need to sort the priority queue for this solver. For instance, we first visit the root, which is distance 0 from the root. Then we visit the direct neighbors distance 1 away. Then we visit the neighbors of the direct neighbors distance 2 away. One of the neighbors distance 2 away will be the original puzzle. But we have already visited this node at distance 0 and don't need to visit it again. Then we will visit the nodes at distance 3. Since there is no backtracking, we always add nodes further and further away from the original root and the nodes at the back of the queue are the furthest away. Therefore, a sort isn't needed.
+
+Using an ``int[26]`` array to store the variable positions instead of a hash table.
+
+* Although lookup for ``{"a":1, "b":0, "c":1, "d":2, "e":4, "f":4, "g":0, "x":1}`` is amortized constant, it is not nearly as fast as ``[1,0,1,2,4,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0]``. If we need to lookup the fixed position for car ``a``, we can just use index 0. This change alone gave a 5 times to 10 times speedup.
+
+## Lessons
+
+* Less is more. The solve logic is simple and this makes it easy to optimize the code.
+
+* BFS works well for this problem. With BFS, we can easily solve the puzzle in 0.02 seconds or less. With this speed, the algorithm could be written in Javascript and run in browser. The player could get an immediate solution to any puzzle they are stuck on.
+
+* BFS also gives shortest solution, which makes it a desirable algorithm for the solver.
+
+* A hash table is a good data structure for keeping track of visited nodes and parents of nodes. We have a lot of nodes to keep track of and the lookup is O(1*).
 
 ## Appendix
+
+The appendix contains solutions for the project puzzles as well as some Java code for the main parts of the maze solver and RushHour solver. The full code for the RushHour solver is in the ``src`` folder.
+
+## Solutions
+
+Here are the solutions generated by the solver:
+
+* **A01**: ``[AR1,PU1,BU1,RL2,CL3,QD2,OD3,XR3]``
+* **A02**: ``[EL1,PD2,XR1,AD1,OL3,BU1,CU2,XR3]``
+* **A03**: ``[PU3,CR2,OU2,AR3,OD3,XR1,BU4,XL1,OU3,AL3,CL3,PD3,OD3,XR3]``
+* **A04**: ``[OD3,XL1,AU3,XR1,OU3,QL3,RL2,PD3,XR3]``
+* **A05**: ``[AR1,PU1,RL1,EL3,FL3,QD2,GD1,OD3,XR3]``
+* **A06**: ``[XL1,EU3,DR1,FU1,RL3,PD2,QD1,OD2,XR4]``
+* **A07**: ``[CD3,FD1,DD1,BR2,EU1,XR1,AD3,XL1,ED1,BL3,DU1,EU1,XR3]``
+* **A08**: ``[AL3,BL2,CU1,DU2,EU2,GL1,XR3,IU2,PL1,QL1,OD3,XR1]``
+* **A09**: ``[XR1,PU3,QL1,DD2,EL1,XR1,AD1,BL1,CL1,FU2,OD1,XR2]``
+* **A10**: ``[CL1,XR2,OU1,QR2,BD4,AR1,DR1,PU2,QL3,XL2,EU2,FL1,HL1,OD3,CR1,EU2,XR3]``
+* **B11**: ``[OD3,XL1,BU2,QL1,EU3,QR1,RR1,BD3,XR1,OU3,QL3,PD1,AR3,PU1,QR3,OD3,XL1,BU4,XR1,OU3,QL3,RL3,PD3,ED2,XR3]``
+* **B12**: ``[BR2,PU1,QL2,CU3,QR2,RR3,PD3,BL1,CU1,XR3,AD1,BL2,PU3,QL1,RL1,OD3,XR1]``
+* **B13**: ``[DD2,ED1,OU1,FR1,XL3,DU2,GU3,FL2,HL2,CD3,KL1,OD3,BR2,DU1,GU1,XR4]``
+* **B14**: ``[DU1,EU1,GU2,HL2,IU1,KR3,ID1,HR2,DD3,ED3,XL2,HL2,BD2,CL3,BU2,FU2,XR4]``
+* **B15**: ``[AL1,BR1,IR1,HR1,QD1,RD1,XL2,EU1,FU1,GL2,OD1,PD1,DR2,EU2,FU2,XR2,QU1,RU1,HL2,IL2,OD1,PD1,XR2]``
+* **B16**: ``[PD1,DD2,EL2,FD1,XL3,CD1,BR1,PU3,GR2,FD1,QL2,CD3,QR2,FU1,GL2,PD3,XR3,PU3,QL1,OD3,XR1]``
+* **B17**: ``[BL1,PU2,FU2,GU2,QR3,RR3,DD2,ER1,XR1,AD4,BL1,EL1,XL1,OR2,DU4,ER1,XR1,AU2,QL3,RL3,PD2,FD1,GD1,XR3]``
+* **B18**: ``[QR2,RR3,PD1,DR3,XL1,BD4,AR1,CR1,XR1,PU3,QL3,OD2,AR3,CR3,OU2,QR3,PD3,XL1,BU4,XR1,PU3,QL3,RL3,OD3,XR3]``
+* **B19**: ``[DU2,EL2,XL2,AD1,BL1,JU1,FU1,OR2,AD3,ER2,XR2,DD4,BL2,EL2,XL2,AU4,ER2,XR2,DU2,OL2,FD1,XR2]``
+* **B20**: ``[CD1,BR2,DU2,EU2,QL1,PD1,FL3,CD1,ED1,XR4]``
+* **C21**: ``[PD2,QR2,XL1,BD4,AR1,XR1,PU3,QL3,OD1,AR3,OU1,QR3,PD3,XL1,BU4,XR1,PU3,QL3,RL3,OD3,XR3]``
+* **C22**: ``[BU1,FU1,GR1,XL1,AD3,XR1,BD1,OL3,PU1,EL1,HU2,QR2,AD1,DD1,EL2,GR1,PD2,CL3,PU2,HU2,ER3,AU1,DU1,QL3,PD3,XR3]``
+* **C23**: ``[QL2,DD1,EL1,PD1,OR1,AU1,XL3,AD1,OL1,PU1,ER1,DU1,QR3,CD1,AD1,BL3,AU1,DU2,EL4,PD1,OR1,AU1,CU2,QL1,FL4,PD2,CD1,DD2,XR4]``
+* **C24**: ``[CU1,DU2,FL1,XL2,AD1,BL1,EU2,GU2,HR3,OR3,AD3,FR2,XR2,CD4,DD4,BL2,FL2,XL2,AU4,FR2,XR2,CU2,OL2,GD1,XR2]``
+* **C25**: ``[CL1,EU1,OU1,PD1,QR2,XL1,BD4,AR1,DR1,XR1,PU3,QL3,GU3,IL1,QR3,PD3,AL1,DL1,XL1,BU4,HL2,QL2,ED2,OD3,CR1,GU1,XR4]``
+* **C26**: ``[DU1,ED1,RL1,GU1,HR1,CD3,XR1,AD1,OL3,PU1,RR2,AD3,RL2,DU1,XL1,CU4,XR1,HL1,GD1,RR3,AU3,EU1,FU1,HL3,FD1,RL2,PD3,XR2]``
+* **C27**: ``[PU2,ER1,OD2,BR2,CR2,DU2,XR1,AD4,XL1,DD2,BL3,CL3,DU1,OU2,EL4,DD1,OD2,CR3,DU2,ER1,XR1,AU3,EL1,FU1,RL3,PD3,OD1,XR3]``
+* **C28**: ``[BU1,ER1,GU3,EL1,FR2,HU1,RR3,CD1,DL1,AD3,DR1,XR1,OR1,CU4,DL1,XL1,AU3,RL3,FL2,HD1,ER1,GD3,EL2,PD3,OR2,AU1,XR3,AD1,OL1,BU1,XR1]``
+* **C29**: ``[QU1,DR1,CR1,FR2,ER1,OD3,XL1,AD1,PL1,QU2,DR1,BD3,DL1,QD1,PR1,AU1,XR3,OU3,CL1,EL1,AD4,CR1,XL2,OD1,PL3,QU1,DR1,BU4,DL1,FL1,QD3,XR3]``
+* **D30**: ``[AR1,DU2,XL1,QU2,FR3,QD2,XR1,DD4,AL1,XL1,QU3,EL3,QD3,BD1,CL1,PU1,FR1,BD1,XR3,QU3,ER1,DU3,EL1,QD3,AR1,DU1,XL3,QU2,BU1,FL4,QD2,BD1,XR3,QU1,RL1,PD2,XR1]``
+* **D31**: ``[BD1,CL1,PU3,FR1,KU1,HR4,DD1,EL1,KD1,FL1,PD1,CR1,BU1,OD3,XR3,OU3,ER1,DU3,EL1,OD3,AR1,DU1,XL3,BD1,CL1,PU1,FR1,KU1,OU1,HL4,KD1,FL1,PD3,CR1,BU1,OD1,XR4]``
+* **D32:** ``[BL1,PU3,ER1,GU3,QR1,ID1,DL1,EL2,HU3,QR2,ER2,FR3,RD3,BL1,GD2,HU1,XR3,AD1,BL2,RU3,DR1,IU3,DL1,RD3,BR2,AU1,IU1,XL3,RU2,GU1,FL4,RD2,GD1,XR3,RU1,QL3,GD1,EL1,PD3,XR1]``
+* **D33**: ``[RL1,PU1,CU1,XR1,HR1,DD1,QR3,AD3,RL2,BU1,XL1,EU3,IR1,AD1,QL3,PD1,DU2,FL3,DD2,QR1,BD1,RR3,EU1,XR1,AU4,FL1,XL1,ED1,RL1,PU1,QR2,IL1,ED3,QL3,CD2,DU1,XR1,AD1,RL2,BU1,HL1,PD3,XR3]``
+* **D34**: ``[PD1,AR1,BU1,FU3,GR1,KD1,QL1,EU2,DR3,ED2,BD1,AL1,PU1,QR3,KU1,GL1,OD3,XR1,KU3,XL1,OU3,QL3,PD1,AR1,BU1,EU2,DL4,ED2,BD1,AL1,PU1,QR3,OD3,AL2,BU1,FU1,XR3,KD1,AL1,OU3,QL1,PD3,XR1]``
+* **D35**: ``[CR1,DD1,RR1,XR1,OD1,PL1,AL1,QU1,RR2,EU3,RL1,QD1,AR1,PR1,OU1,RL2,DU1,GR4,DD1,RR1,OD1,PL1,AL1,QU1,RR2,BD3,ED3,RL1,QD1,AR1,PR1,CL2,XL2,OU1,RL2,DU3,RR1,FL1,GL1,QD2,OD1,PL1,DU1,XR3]``
 
 ## Java code examples
 
 Maze solver:
 
 ```java
-// https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm#Pseudocode
 public class Solver {
 
     static List<Integer[]> shortest_path(Map<Integer[], Integer[]> prev,
@@ -711,7 +685,8 @@ static String convertPathToInstruction(List<Map<Character, Integer>> path,
                         (d > 0) ? "R" : 
                         "L";
                     instruction += String.format("%s%s%d\n", car, direction,
-                        (car.equals(metadata.x)) ? Math.abs(d) - 1 : Math.abs(d)
+                        (car.equals(metadata.x) && i == path.size() - 1)
+                        ? Math.abs(d) - 1 : Math.abs(d)
                     );
                 }
             }
@@ -720,43 +695,3 @@ static String convertPathToInstruction(List<Map<Character, Integer>> path,
         return instruction;
     }
 ```
-
-## Solutions
-
-### 35 Project Cases
-
-* A01: [AR1, PU1, BU1, RL2, CL3, QD2, OD3, XR3]
-* A02: [EL1, PD2, XR0, AD1, OL3, BU1, CU2, XR3]
-* A03: [PU3, CR2, OU2, AR3, OD3, XR0, BU4, XL0]
-* A04: [OD3, XL0, AU3, XR0, OU3, QL3, RL2, PD3, XR3]
-* A05: [AR1, PU1, RL1, EL3, FL3, QD2, GD1, OD3, XR3]
-* A06: [XL0, EU3, DR1, FU1, RL3, PD2, QD1, OD2, XR4]
-* A07: [CD3, FD1, DD1, BR2, EU1, XR0, AD3, XL0, ED1, BL3, DU1, EU1, XR3]
-* A08: [AL3, BL2, CU1, DU2, EU2, GL1, XR2, IU2, PL1, QL1, OD3, XR1]
-* A09: [XR0, PU3, QL1, DD2, EL1, XR0, AD1, BL1, CL1, FU2, OD1, XR2]
-* A10: [CL1, XR1, OU1, QR2, BD4, AR1, DR1, PU2, QL3, XL1, EU2, FL1, HL1, OD3, CR1, EU2, XR3]
-* B11: [OD3, XL0, BU2, QL1, EU3, QR1, RR1, BD3, XR0, OU3, QL3, PD1, AR3, PU1, QR3, OD3, XL0, BU4, XR0, OU3, QL3, RL3, PD3, ED2, XR3]
-* B12: [BR2, PU1, QL2, CU3, QR2, RR3, PD3, BL1, CU1, XR2, AD1, BL2, PU3, QL1, RL1, OD3, XR1]
-* B13: [DD2, ED1, OU1, FR1, XL2, DU2, GU3, FL2, HL2, CD3, KL1, OD3, BR2, DU1, GU1, XR4]
-* B14: [DU1, EU1, GU2, HL2, IU1, KR3, ID1, HR2, DD3, ED3, XL1, HL2, BD2, CL3, BU2, FU2, XR4]
-* B15: [AL1, BR1, IR1, HR1, QD1, RD1, XL1, EU1, FU1, GL2, OD1, PD1, DR2, EU2, FU2, XR1, QU1, RU1, HL2, IL2, OD1, PD1, XR2]
-* B16: [PD1, DD2, EL2, FD1, XL2, CD1, BR1, PU3, GR2, FD1, QL2, CD3, QR2, FU1, GL2, PD3, XR2, PU3, QL1, OD3, XR1]
-* B17: [BL1, PU2, FU2, GU2, QR3, RR3, DD2, ER1, XR0, AD4, BL1, EL1, XL0, OR2, DU4, ER1, XR0, AU2, QL3, RL3, PD2, FD1, GD1, XR3]
-* B18: [QR2, RR3, PD1, DR3, XL0, BD4, AR1, CR1, XR0, PU3, QL3, OD2, AR3, CR3, OU2, QR3, PD3, XL0, BU4, XR0, PU3, QL3, RL3, OD3, XR3]
-* B19: [DU2, EL2, XL1, AD1, BL1, JU1, FU1, OR2, AD3, ER2, XR1, DD4, BL2, EL2, XL1, AU4, ER2, XR1, DU2, OL2, FD1, XR2]
-* B20: [CD1, BR2, DU2, EU2, QL1, PD1, FL3, CD1, ED1, XR4]
-* C21: [PD2, QR2, XL0, BD4, AR1, XR0, PU3, QL3, OD1, AR3, OU1, QR3, PD3, XL0, BU4, XR0, PU3, QL3, RL3, OD3, XR3]
-* C22: [BU1, FU1, GR1, XL0, AD3, XR0, BD1, OL3, PU1, EL1, HU2, QR2, AD1, DD1, EL2, GR1, PD2, CL3, PU2, HU2, ER3, AU1, DU1, QL3, PD3, XR3]
-* C23: [QL2, DD1, EL1, PD1, OR1, AU1, XL2, AD1, OL1, PU1, ER1, DU1, QR3, CD1, AD1, BL3, AU1, DU2, EL4, PD1, OR1, AU1, CU2, QL1, FL4, PD2, CD1, DD2, XR4]
-* C24: [CU1, DU2, FL1, XL1, AD1, BL1, EU2, GU2, HR3, OR3, AD3, FR2, XR1, CD4, DD4, BL2, FL2, XL1, AU4, FR2, XR1, CU2, OL2, GD1, XR2]
-* C25: [CL1, EU1, OU1, PD1, QR2, XL0, BD4, AR1, DR1, XR0, PU3, QL3, GU3, IL1, QR3, PD3, AL1, DL1, XL0, BU4, HL2, QL2, ED2, OD3, CR1, GU1, XR4]
-* C26: [DU1, ED1, RL1, GU1, HR1, CD3, XR0, AD1, OL3, PU1, RR2, AD3, RL2, DU1, XL0, CU4, XR0, HL1, GD1, RR3, AU3, EU1, FU1, HL3, FD1, RL2, PD3, XR2]
-* C27: [PU2, ER1, OD2, BR2, CR2, DU2, XR0, AD4, XL0, DD2, BL3, CL3, DU1, OU2, EL4, DD1, OD2, CR3, DU2, ER1, XR0, AU3, EL1, FU1, RL3, PD3, OD1, XR3]
-* C28: [BU1, ER1, GU3, EL1, FR2, HU1, RR3, CD1, DL1, AD3, DR1, XR0, OR1, CU4, DL1, XL0, AU3, RL3, FL2, HD1, ER1, GD3, EL2, PD3, OR2, AU1, XR2, AD1, OL1, BU1, XR1]
-* C29: [QU1, DR1, CR1, FR2, ER1, OD3, XL0, AD1, PL1, QU2, DR1, BD3, DL1, QD1, PR1, AU1, XR2, OU3, CL1, EL1, AD4, CR1, XL1, OD1, PL3, QU1, DR1, BU4, DL1, FL1, QD3, XR3
-* D30: [AR1, DU2, XL0, QU2, FR3, QD2, XR0, DD4, AL1, XL0, QU3, EL3, QD3, BD1, CL1, PU1, FR1, BD1, XR2, QU3, ER1, DU3, EL1, QD3, AR1, DU1, XL2, QU2, BU1, FL4, QD2, BD1, XR2, QU1, RL1, PD2, XR1]
-* D31: [BD1, CL1, PU3, FR1, KU1, HR4, DD1, EL1, KD1, FL1, PD1, CR1, BU1, OD3, XR2, OU3, ER1, DU3, EL1, OD3, AR1, DU1, XL2, BD1, CL1, PU1, FR1, KU1, OU1, HL4, KD1, FL1, PD3, CR1, BU1, OD1, XR4]
-* D32: [BL1, PU3, ER1, GU3, QR1, ID1, DL1, EL2, HU3, QR2, ER2, FR3, RD3, BL1, GD2, HU1, XR2, AD1, BL2, RU3, DR1, IU3, DL1, RD3, BR2, AU1, IU1, XL2, RU2, GU1, FL4, RD2, GD1, XR2, RU1, QL3, GD1, EL1, PD3, XR1]
-* D33: [RL1, PU1, CU1, XR0, HR1, DD1, QR3, AD3, RL2, BU1, XL0, EU3, IR1, AD1, QL3, PD1, DU2, FL3, DD2, QR1, BD1, RR3, EU1, XR0, AU4, FL1, XL0, ED1, RL1, PU1, QR2, IL1, ED3, QL3, CD2, DU1, XR0, AD1, RL2, BU1, HL1, PD3, XR3]
-* D34: [PD1, AR1, BU1, FU3, GR1, KD1, QL1, EU2, DR3, ED2, BD1, AL1, PU1, QR3, KU1, GL1, OD3, XR0, KU3, XL0, OU3, QL3, PD1, AR1, BU1, EU2, DL4, ED2, BD1, AL1, PU1, QR3, OD3, AL2, BU1, FU1, XR2, KD1,  AL1, OU3, QL1, PD3, XR1]
-* D35: [CR1, DD1, RR1, XR0, OD1, PL1, AL1, QU1, RR2, EU3, RL1, QD1, AR1, PR1, OU1, RL2, DU1, GR4, DD1, RR1, OD1, PL1, AL1, QU1, RR2, BD3, ED3, RL1, QD1, AR1, PR1, CL2, XL1, OU1, RL2, DU3, RR1, FL1, GL1, QD2, OD1, PL1, DU1, XR3]

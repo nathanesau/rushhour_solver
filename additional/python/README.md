@@ -1,6 +1,6 @@
 # rushhour_solver (Python)
 
-Solve RushHour puzzles using Dijkstra's Algorithm in Python.
+Solve RushHour puzzles using BFS in Python.
 
 ## Instructions
 

@@ -161,7 +161,8 @@ public class Solver {
                     Boolean v = metadata.orientation.get(car);
                     instruction += String.format("%s%s%d\n", car,
                             (v && d > 0) ? "D" : (v && d < 0) ? "U" : (d > 0) ? "R" : "L",
-                            (car.equals(metadata.x)) ? Math.abs(d) - 1 : Math.abs(d)
+                            (car.equals(metadata.x) && i == path.size() - 1) 
+                            ? Math.abs(d) - 1 : Math.abs(d)
                     );
                 }
             }

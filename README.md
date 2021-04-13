@@ -1,6 +1,6 @@
 # rushhour_solver
 
-Solve RushHour puzzles using Dijkstra's Algorithm.
+Solve RushHour puzzles using BFS Algorithm.
 
 See the [docs](docs/README.md) for a detailed a explanation of the algorithm.
 
@@ -10,7 +10,7 @@ See the [docs](docs/README.md) for a detailed a explanation of the algorithm.
 
 * [docs](docs/README.md): contains the documentation for the project.
 
-* [src](src/README.md): contains the Java source for the project.
+* src: contains the Java source for the project.
 
 
 ## Instructions

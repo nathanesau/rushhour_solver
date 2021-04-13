@@ -1,6 +1,6 @@
 # rushhour_solver (C++)
 
-Solve RushHour puzzles using Dijkstra's Algorithm in C++.
+Solve RushHour puzzles using BFS in C++.
 
 ## Instructions
 
