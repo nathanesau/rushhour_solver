@@ -2,6 +2,8 @@
 package rushhour;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.Writer;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -205,10 +207,10 @@ public class Solver {
      * 
      * @param input Input file containing RushHour puzzle.
      * @param output Output file for RushHour solution.
-     * @throws Exception if the file not found.
+     * @throws FileNotFoundException if the file not found.
      */
     public static void solveFromFile(String input, String output)
-            throws Exception {
+            throws FileNotFoundException {
 
         String jam = "";
         try (BufferedReader reader = Files.newBufferedReader(Paths.get(input))) {
@@ -219,11 +221,17 @@ public class Solver {
             }
             while (line != null && !line.isEmpty());
         }
+        catch (IOException e) {
+            // ignore
+        }
 
         String instruction = solve(jam);
         try (Writer writer = Files.newBufferedWriter(Paths.get(output),
                 Charset.defaultCharset())) {
             writer.write(instruction);
+        }
+        catch (IOException e) {
+            // ignore
         }
     }
 
